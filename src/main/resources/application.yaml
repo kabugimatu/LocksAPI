@@ -1,0 +1,43 @@
+server:
+  port: 8095
+  contextPath: /lock
+---
+spring:
+  profiles: local,default
+datasource:
+  microserviceapp:
+    url: jdbc:mysql://localhost:3306/microservice_poc
+    username: root
+    password: root
+    driverClassName: com.mysql.jdbc.Driver
+    defaultSchema:
+    maxPoolSize: 20
+    hibernate:
+      hbm2ddl.method: update
+      show_sql: true
+      format_sql: true
+      dialect: org.hibernate.dialect.MySQLDialect
+  lockIp: 192.168.0.164
+  lockPort: 3015
+#  lockIp: 127.0.0.1
+#  lockPort: 25000
+#  lockIp: 192.168.43.122
+#  lockPort: 3015
+#  fieldSepartor: *
+#  receiveResponseFromServer: 1
+---
+spring:
+  profiles: prod
+datasource:
+  microserviceapp:
+    url: jdbc:mysql://localhost:3306/microservice_poc
+    username: root
+    password: root
+    driverClassName: com.mysql.jdbc.Driver
+    defaultSchema:
+    maxPoolSize: 20
+    hibernate:
+      hbm2ddl.method: update
+      show_sql: true
+      format_sql: true
+      dialect: org.hibernate.dialect.MySQLDialect

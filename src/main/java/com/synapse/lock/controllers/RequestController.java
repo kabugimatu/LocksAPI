@@ -2,9 +2,9 @@ package com.synapse.lock.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synapse.lock.models.Response;
-import com.synapse.lock.models.VingCardRequest;
+import com.synapse.lock.models.KeyCardRequest;
 import com.synapse.lock.payload.GenericPayload;
-import com.synapse.lock.service.SocketServiceImpl;
+import com.synapse.lock.service.LockServiceImpl;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,7 @@ public class RequestController {
     private final Logger LOG = LoggerFactory.getLogger(RequestController.class);
 
     @Autowired
-    SocketServiceImpl socketService;
+    LockServiceImpl lockService;
 
     ObjectMapper mapper = new ObjectMapper();
 
@@ -36,28 +36,30 @@ public class RequestController {
     Environment env;
     
     
-    @ApiOperation(value = "Direct Vision Call",
-            notes = "Call Vision from Hotelia Spring Boot\n"
-            + "Will execute the .exeon client machine.",
+    @ApiOperation(value = "Direct Lock Software Call",
+            notes = "Call Lock from Hotelia \n"
+            + "Will execute the .exe on client machine.",
             response = Response.class,
             responseContainer = "Object")
     @RequestMapping(value = "/visionCall", method = RequestMethod.POST)
-    public ResponseEntity<?> openVisionSoftwarre(@RequestBody VingCardRequest request) {
+    public ResponseEntity<?> openLockSoftware(@RequestBody KeyCardRequest request) {
         ResponseEntity<?> res = null;
         Response response = null;
         response = new Response();
         System.out.println("Received Request>>"  +request.getCommandId());
-        if(request.getCommandId().equalsIgnoreCase("openvision"))
+         Process process = null;
+        if(request.getCommandId().equalsIgnoreCase("direct-integ"))
         {
             try{
                 
                  
-                Process process = new ProcessBuilder(env.getProperty("datasource.visionPath")).start();
+               process = new ProcessBuilder(env.getProperty("datasource.locksoftpath")).start();
                  int waitFlag = process.waitFor();
                  
                  if(waitFlag == 0){
                      response.setResponseCode("00001");
                       response.setResponseDescription("Vision Called and exited successfully with exit code " + process.exitValue());
+                     process.destroyForcibly();
                  }
                 
             }
@@ -68,6 +70,8 @@ public class RequestController {
                 response.setResponseDescription("Error occured " + e.getMessage());
                 res = new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
             }
+            
+         //   process.destroyForcibly();
             
         }
 
@@ -87,22 +91,7 @@ public class RequestController {
     @RequestMapping(value = "/checkInAGuest", method = RequestMethod.POST)
     public ResponseEntity<?> checkInAGuest(@RequestBody GenericPayload request) {
         ResponseEntity<?> res = null;
-        Response response = null;
-        try {
-            if (!request.isUsePostedCommand()) {//check if request wants to use the command that came with payload or not
-                request.setCommandId("I");
-            }
-            LOG.info("Posing checkInAGuest:" + mapper.writeValueAsString(request));
-            LOG.info("Posing Payload:" + socketService.getTCPIPPayloadToSend(request));
-            response = socketService.sendRequestToEmulator(socketService.getTCPIPPayloadToSend(request));
-            res = new ResponseEntity<>(response, HttpStatus.OK);
-
-        } catch (Exception e) {
-            response = new Response();
-            response.setResponseCode("05");
-            response.setResponseDescription("Error occured " + e.getMessage());
-            res = new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
-        }
+      
         return res;
     }
 
@@ -115,21 +104,7 @@ public class RequestController {
     public ResponseEntity<?> checkOutAGuest(@RequestBody GenericPayload request) {
         ResponseEntity<?> res = null;
         Response response = null;
-        try {
-            if (!request.isUsePostedCommand()) {//check if request wants to use the command that came with payload or not
-                request.setCommandId("B");
-            }
-            LOG.info("Posing checkOutAGuest:" + mapper.writeValueAsString(request));
-            LOG.info("Posing Payload:" + socketService.getTCPIPPayloadToSend(request));
-            response = socketService.sendRequestToEmulator(socketService.getTCPIPPayloadToSend(request));
-            res = new ResponseEntity<>(response, HttpStatus.OK);
-
-        } catch (Exception e) {
-            response = new Response();
-            response.setResponseCode("05");
-            response.setResponseDescription("Error occured " + e.getMessage());
-            res = new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
-        }
+        
         return res;
     }
 
@@ -143,21 +118,7 @@ public class RequestController {
     public ResponseEntity<?> changeGuestStatus(@RequestBody GenericPayload request) {
         ResponseEntity<?> res = null;
         Response response = null;
-        try {
-            if (!request.isUsePostedCommand()) {//check if request wants to use the command that came with payload or not
-                request.setCommandId("C");
-            }
-            LOG.info("Posing changeGuestStatus:" + mapper.writeValueAsString(request));
-            LOG.info("Posing Payload:" + socketService.getTCPIPPayloadToSend(request));
-            response = socketService.sendRequestToEmulator(socketService.getTCPIPPayloadToSend(request));
-            res = new ResponseEntity<>(response, HttpStatus.OK);
-
-        } catch (Exception e) {
-            response = new Response();
-            response.setResponseCode("05");
-            response.setResponseDescription("Error occured " + e.getMessage());
-            res = new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
-        }
+        
         return res;
     }
 
@@ -171,21 +132,7 @@ public class RequestController {
     public ResponseEntity<?> replaceGuestCard(@RequestBody GenericPayload request) {
         ResponseEntity<?> res = null;
         Response response = null;
-        try {
-            if (!request.isUsePostedCommand()) {//check if request wants to use the command that came with payload or not
-                request.setCommandId("D");
-            }
-            LOG.info("Posing replaceGuestCard:" + mapper.writeValueAsString(request));
-            LOG.info("Posing Payload:" + socketService.getTCPIPPayloadToSend(request));
-            response = socketService.sendRequestToEmulator(socketService.getTCPIPPayloadToSend(request));
-            res = new ResponseEntity<>(response, HttpStatus.OK);
-
-        } catch (Exception e) {
-            response = new Response();
-            response.setResponseCode("05");
-            response.setResponseDescription("Error occured " + e.getMessage());
-            res = new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
-        }
+       
         return res;
     }
 
@@ -197,20 +144,7 @@ public class RequestController {
     public ResponseEntity<?> verifyGuestCard() {
         ResponseEntity<?> res = null;
         Response response = null;
-        try {
-            GenericPayload request = new GenericPayload();
-            request.setCommandId("E");
-            LOG.info("Posing verifyGuestCard:" + mapper.writeValueAsString(request));
-            LOG.info("Posing Payload:" + socketService.getTCPIPPayloadToSend(request));
-            response = socketService.sendRequestToEmulator(socketService.getTCPIPPayloadToSend(request));
-            res = new ResponseEntity<>(response, HttpStatus.OK);
-
-        } catch (Exception e) {
-            response = new Response();
-            response.setResponseCode("05");
-            response.setResponseDescription("Error occured " + e.getMessage());
-            res = new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
-        }
+        
         return res;
     }
 
@@ -223,21 +157,7 @@ public class RequestController {
     public ResponseEntity<?> replaceGuestUserId(@RequestBody GenericPayload request) {
         ResponseEntity<?> res = null;
         Response response = null;
-        try {
-            if (!request.isUsePostedCommand()) {//check if request wants to use the command that came with payload or not
-                request.setCommandId("F");
-            }
-            LOG.info("Posing replaceGuestUserId:" + mapper.writeValueAsString(request));
-            LOG.info("Posing Payload:" + socketService.getTCPIPPayloadToSend(request));
-            response = socketService.sendRequestToEmulator(socketService.getTCPIPPayloadToSend(request));
-            res = new ResponseEntity<>(response, HttpStatus.OK);
-
-        } catch (Exception e) {
-            response = new Response();
-            response.setResponseCode("05");
-            response.setResponseDescription("Error occured " + e.getMessage());
-            res = new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
-        }
+       
         return res;
     }
 
@@ -250,21 +170,7 @@ public class RequestController {
     public ResponseEntity<?> preCheckInGuest(@RequestBody GenericPayload request) {
         ResponseEntity<?> res = null;
         Response response = null;
-        try {
-            if (!request.isUsePostedCommand()) {//check if request wants to use the command that came with payload or not
-                request.setCommandId("G");
-            }
-            LOG.info("Posing preCheckInGuest:" + mapper.writeValueAsString(request));
-            LOG.info("Posing Payload:" + socketService.getTCPIPPayloadToSend(request));
-            response = socketService.sendRequestToEmulator(socketService.getTCPIPPayloadToSend(request));
-            res = new ResponseEntity<>(response, HttpStatus.OK);
-
-        } catch (Exception e) {
-            response = new Response();
-            response.setResponseCode("05");
-            response.setResponseDescription("Error occured " + e.getMessage());
-            res = new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
-        }
+      
         return res;
     }
 
@@ -278,22 +184,7 @@ public class RequestController {
     public ResponseEntity<?> addGuest(@RequestBody GenericPayload request) {
         ResponseEntity<?> res = null;
         Response response = null;
-        try {
-            if (!request.isUsePostedCommand()) {//check if request wants to use the command that came with payload or not
-                request.setCommandId("H");
-            }
-            LOG.info("Posing addGuest:" + mapper.writeValueAsString(request));
-            LOG.info("Posing Payload:" + socketService.getTCPIPPayloadToSend(request));
-            response = socketService.sendRequestToEmulator(socketService.getTCPIPPayloadToSend(request));
-            res = new ResponseEntity<>(response, HttpStatus.OK);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            response = new Response();
-            response.setResponseCode("05");
-            response.setResponseDescription("Error occured " + e.getMessage());
-            res = new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
-        }
+       
         return res;
     }
 
@@ -306,21 +197,7 @@ public class RequestController {
     public ResponseEntity<?> checkOutOldGuestCheckInNewGuest(@RequestBody GenericPayload request) {
         ResponseEntity<?> res = null;
         Response response = null;
-        try {
-            if (!request.isUsePostedCommand()) {//check if request wants to use the command that came with payload or not
-                request.setCommandId("I");
-            }
-            LOG.info("Posing checkOutOldGuestCheckInNewGuest:" + mapper.writeValueAsString(request));
-            LOG.info("Posing Payload:" + socketService.getTCPIPPayloadToSend(request));
-            response = socketService.sendRequestToEmulator(socketService.getTCPIPPayloadToSend(request));
-            res = new ResponseEntity<>(response, HttpStatus.OK);
-
-        } catch (Exception e) {
-            response = new Response();
-            response.setResponseCode("05");
-            response.setResponseDescription("Error occured " + e.getMessage());
-            res = new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
-        }
+        
         return res;
     }
 
@@ -333,46 +210,32 @@ public class RequestController {
     public ResponseEntity<?> writeToCard(@RequestBody GenericPayload request) {
         ResponseEntity<?> res = null;
         Response response = null;
-        try {
-            if (!request.isUsePostedCommand()) {//check if request wants to use the command that came with payload or not
-                request.setCommandId("!");
-            }
-            LOG.info("Posing writeToCard:" + mapper.writeValueAsString(request));
-            LOG.info("Posing Payload:" + socketService.getTCPIPPayloadToSend(request));
-            response = socketService.sendRequestToEmulator(socketService.getTCPIPPayloadToSend(request));
-            res = new ResponseEntity<>(response, HttpStatus.OK);
-
-        } catch (Exception e) {
-            response = new Response();
-            response.setResponseCode("05");
-            response.setResponseDescription("Error occured " + e.getMessage());
-            res = new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
-        }
+       
         return res;
     }
 
-    @ApiOperation(value = "Start the localhost Simulated server",
-            notes = "Runs on ip 127.0.0.1 port 25000"
-            + "This is to simulate a server connection that responds with values. To prove that the application can receiver responses. Before one tests One should set the lockIp to 127.0.0.1, lockPort 25000 and receiveResponseFromServer 1, Restart the application,Click the button Below.the simulate any request above.you should receive responses. You can also check via a network tool to confirm this(Optional) ",
-            response = String.class,
-            responseContainer = "Object")
-    @RequestMapping(value = "/zstartLocalhostSimulatedServer", method = RequestMethod.POST)
-    public ResponseEntity<?> startLocalhostSimulatedServer() {
-        ResponseEntity<?> res = null;
-        Response response = null;
-        try {
-
-            LOG.info("Starting server:");
-            socketService.simulatedEmulatorToShowApplicationCanReceiveResponses();
-            res = new ResponseEntity<>("server 127.0.0.1 is now up", HttpStatus.OK);
-
-        } catch (Exception e) {
-            response = new Response();
-            response.setResponseCode("05");
-            response.setResponseDescription("Error occured " + e.getMessage());
-            res = new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
-        }
-        return res;
-    }
+//    @ApiOperation(value = "Start the localhost Simulated server",
+//            notes = "Runs on ip 127.0.0.1 port 25000"
+//            + "This is to simulate a server connection that responds with values. To prove that the application can receiver responses. Before one tests One should set the lockIp to 127.0.0.1, lockPort 25000 and receiveResponseFromServer 1, Restart the application,Click the button Below.the simulate any request above.you should receive responses. You can also check via a network tool to confirm this(Optional) ",
+//            response = String.class,
+//            responseContainer = "Object")
+//    @RequestMapping(value = "/zstartLocalhostSimulatedServer", method = RequestMethod.POST)
+//    public ResponseEntity<?> startLocalhostSimulatedServer() {
+//        ResponseEntity<?> res = null;
+//        Response response = null;
+//        try {
+//
+//            LOG.info("Starting server:");
+//            socketService.simulatedEmulatorToShowApplicationCanReceiveResponses();
+//            res = new ResponseEntity<>("server 127.0.0.1 is now up", HttpStatus.OK);
+//
+//        } catch (Exception e) {
+//            response = new Response();
+//            response.setResponseCode("05");
+//            response.setResponseDescription("Error occured " + e.getMessage());
+//            res = new ResponseEntity<>(response, HttpStatus.EXPECTATION_FAILED);
+//        }
+//        return res;
+//    }
 
 }

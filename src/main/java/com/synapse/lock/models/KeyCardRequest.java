@@ -9,7 +9,7 @@ package com.synapse.lock.models;
  *
  * @author Kabugi
  */
-public class VingCardRequest {
+public class KeyCardRequest {
     String commandId;
     String lockType;
 

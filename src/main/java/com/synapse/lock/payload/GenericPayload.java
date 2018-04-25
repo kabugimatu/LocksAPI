@@ -38,7 +38,7 @@ public class GenericPayload {
     public String card_Serial_Number;
     public String vingCard_Code;
     public boolean usePostedCommand;
-    public List<UnspecifiedFields> unspecifiedFields;
+  
 
     public String getTrack_3_data() {
         return track_3_data;
@@ -56,13 +56,7 @@ public class GenericPayload {
         this.usePostedCommand = usePostedCommand;
     }
 
-    public List<UnspecifiedFields> getUnspecifiedFields() {
-        return unspecifiedFields;
-    }
-
-    public void setUnspecifiedFields(List<UnspecifiedFields> unspecifiedFields) {
-        this.unspecifiedFields = unspecifiedFields;
-    }
+    
 
     public String getCommandId() {
         return commandId;

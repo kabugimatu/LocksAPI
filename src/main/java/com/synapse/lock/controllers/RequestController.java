@@ -1,6 +1,7 @@
 package com.synapse.lock.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.synapse.lock.models.JNALocksInterface;
 import com.synapse.lock.models.Response;
 import com.synapse.lock.models.KeyCardRequest;
 import com.synapse.lock.payload.GenericPayload;
@@ -91,6 +92,15 @@ public class RequestController {
     @RequestMapping(value = "/checkInAGuest", method = RequestMethod.POST)
     public ResponseEntity<?> checkInAGuest(@RequestBody GenericPayload request) {
         ResponseEntity<?> res = null;
+        
+          
+        String lockEncodeData = lockService.getPayloadToSend(request);
+        
+        System.out.println("Encode Data >> " + lockEncodeData);
+        
+        
+        String response = JNALocksInterface.PMSifEncodeKcdLcl("I", lockEncodeData, true, request.getUserName(), request.getFirst_Name(), request.getUserLastName());
+        System.out.println("Response from api >> " +response);
       
         return res;
     }

@@ -18,6 +18,7 @@ public class JNALocksInterface {
   
     public static native String PMSifEncodeKcdLcl(String commandCode,String pmsData,boolean debugMode,String user,String userFirstName,String userLastName);
     static {
+         System.setProperty("jna.library.path", "D:\\NBKDocs\\dev\\NetBeansProjects\\PearlSoft\\testLock");
         Native.register("win32-x86-64pmsif.dll");
     }
 

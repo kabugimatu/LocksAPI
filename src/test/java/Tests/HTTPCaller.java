@@ -23,7 +23,7 @@ public class HTTPCaller {
         String jsonResponse  = "";
         try {
             OkHttpClient client = new OkHttpClient();
-            MediaType mediaType = MediaType.parse("text/plain");
+            MediaType mediaType = MediaType.parse("appplication/json");
 
             RequestBody requestBody = RequestBody.create(mediaType, jsonString);
 

@@ -5,11 +5,6 @@
  */
 package com.synapse.lock.payload;
 
-import com.synapse.lock.models.UnspecifiedFields;
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
-
 /**
  *
  * @author patrick

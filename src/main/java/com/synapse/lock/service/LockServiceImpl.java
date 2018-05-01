@@ -1,21 +1,10 @@
 package com.synapse.lock.service;
 
-import com.synapse.lock.models.Response;
-import com.synapse.lock.models.UnspecifiedFields;
+import com.synapse.lock.payload.CheckinPayload;
+import com.synapse.lock.payload.CheckoutPayload;
 import com.synapse.lock.payload.GenericPayload;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.Scanner;
-import java.util.logging.Level;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,15 +26,57 @@ public class LockServiceImpl {
    
     
 
+    public String checkinPayload(){
+        String checkinPayload = "";
+        
+        return checkinPayload;
+    }
+     public String generateCheckOutPayload(CheckoutPayload payLoad)
+    {
+         String payLoadData = "";
+        
+       String fieldSeparator = env.getProperty("datasource.fieldSepartor") == null ? "*" : env.getProperty("datasource.fieldSepartor");
+
+        payLoadData = fieldSeparator+"R"+payLoad.getRoomName()+fieldSeparator+"T" +payLoad.getRoomType();
+       
+       return payLoadData;
+        
+    }
+    
+    public String generateCheckInPayload(CheckinPayload payLoad)
+    {
+        String payLoadData = "";
+        
+       String fieldSeparator = env.getProperty("datasource.fieldSepartor") == null ? "*" : env.getProperty("datasource.fieldSepartor");
+
+       String checkinTime = new SimpleDateFormat("yyyyMMddhhmm").format(new Date());
+      
+       System.out.println("Checking >> " + checkinTime);
+       GenericPayload payLoadSample = new GenericPayload();
+        payLoadSample.setRoom_Name(payLoad.getRoomName());
+        payLoadSample.setRoom_List(payLoad.getRoomName());
+        payLoadSample.setUser_Type(payLoad.getRoomType());
+        payLoadSample.setUser_Group(payLoad.getUserGroup());
+        payLoadSample.setCheck_In_time(checkinTime);
+        payLoadSample.setCheck_Out_Time(payLoad.getCheckoutTime());
+        payLoadSample.setFamily_Name(payLoad.getGuestLastName());
+        payLoadSample.setFirst_Name(payLoad.getGuestFirstName());
+        payLoadSample.setpMS_ID("121212");
+       
+               
+               
+       payLoadData = getPayloadToSend(payLoadSample);
+        
+        
+        return payLoadData;
+                
+    }
  
      public String getPayloadToSend(GenericPayload thisPayload) {
         String payload = "";
         String fieldSeparator = env.getProperty("datasource.fieldSepartor") == null ? "*" : env.getProperty("datasource.fieldSepartor");
 
-        if (thisPayload.commandId != null && !thisPayload.commandId.equals("string") && !thisPayload.commandId.equals("string") && thisPayload.commandId.length() > 0) {
-            payload += "" + thisPayload.commandId + fieldSeparator;
-        }
-        if (thisPayload.room_Name != null && !thisPayload.room_Name.equals("string") && !thisPayload.commandId.equals("string") && thisPayload.room_Name.length() > 0) {
+        if (thisPayload.room_Name != null && !thisPayload.room_Name.equals("string") && thisPayload.room_Name.length() > 0) {
             payload += "R" + thisPayload.room_Name + fieldSeparator;
         }
         if (thisPayload.room_List != null && !thisPayload.room_List.equals("string") && thisPayload.room_List.length() > 0) {

@@ -6,40 +6,30 @@
 package com.synapse.lock.models;
 
 import com.sun.jna.*;
-import com.synapse.lock.payload.GenericPayload;
-import com.synapse.lock.service.LockServiceImpl;
+import com.sun.jna.win32.StdCallLibrary;
 
 /**
  *
  * @author Kabugi
  */
 public class JNALocksInterface {
-    public static native int PMSifRegister(String license ,String appName);
-  
-    public static native String PMSifEncodeKcdLcl(String commandCode,String pmsData,boolean debugMode,String user,String userFirstName,String userLastName);
-    static {
-         System.setProperty("jna.library.path", "D:\\NBKDocs\\dev\\NetBeansProjects\\PearlSoft\\testLock");
-        Native.register("win32-x86-64pmsif.dll");
-    }
 
-    public static void main(String[] args) {
-        
-      //  System.out.println("Int response >> " + PMSifRegister("42860149","BatchClient"));
-        GenericPayload payLoadSample = new GenericPayload();
-        payLoadSample.setRoom_Name("101");
-        payLoadSample.setRoom_List("101");
-        payLoadSample.setUser_Type("SingleStandard");
-        payLoadSample.setUser_Group("GUEST");
-        payLoadSample.setCheck_In_time("");
-        payLoadSample.setCheck_Out_Time("");
-        payLoadSample.setFamily_Name("Matu");
-        payLoadSample.setFirst_Name("ZACHARY");
-        payLoadSample.setpMS_ID("121212");
-        
-        LockServiceImpl lockService = new LockServiceImpl();
-        String data = lockService.getPayloadToSend(payLoadSample);
+    public interface VinguardLibrary extends StdCallLibrary {
 
         
-        PMSifEncodeKcdLcl("I", data, true, "zkmatu", "Zachary", "Matu");
+        VinguardLibrary INSTANCE = (VinguardLibrary) Native.loadLibrary("C:\\Program Files (x86)\\VingCard\\Vision\\pmsif.dll", VinguardLibrary.class);
+
+        VinguardLibrary SYNC_INSTANCE = (VinguardLibrary) Native.synchronizedLibrary(INSTANCE);
+
+        public int PMSifRegister(String license, String appName);
+
+        public int PMSifUnregister();
+        
+        public void PMSifEncodeKcdLcl(String b,byte[] dta,boolean debug,String szOpid,String szOpFirst,String szOpLast);
+
+
     }
+
+   
+
 }

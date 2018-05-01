@@ -12,6 +12,8 @@ package com.synapse.lock.models;
 public class KeyCardRequest {
     String commandId;
     String lockType;
+    
+    
 
     public String getCommandId() {
         return commandId;

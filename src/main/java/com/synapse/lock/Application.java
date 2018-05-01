@@ -9,8 +9,9 @@ public class Application {
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
-                JNALocksInterface locksInterface = new JNALocksInterface();
+                //JNALocksInterface locksInterface = new JNALocksInterface();
                 System.out.println("Registering Locks Interface...");
+                
                 int response= JNALocksInterface.PMSifRegister("42860149","BatchClient");
                 if( response==0)
                 {

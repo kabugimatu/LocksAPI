@@ -6,41 +6,41 @@
 package Tests;
 
 import com.google.gson.Gson;
-import com.synapse.lock.payload.GenericPayload;
+import com.synapse.lock.payload.CheckinPayload;
 
 /**
  *
  * @author zkmatu
  */
 public class TestCheckin {
-    
-    public static void main(String[] args)
-    {
-        try{
-            
-            GenericPayload payLoadSample = new GenericPayload();
-            payLoadSample.setRoom_Name("101");
-            payLoadSample.setRoom_List("101");
-            payLoadSample.setUser_Type("SingleStandard");
-            payLoadSample.setUser_Group("GUEST");
-            payLoadSample.setCheck_In_time("");
-            payLoadSample.setCheck_Out_Time("");
-            payLoadSample.setFamily_Name("Matu");
-            payLoadSample.setFirst_Name("ZACHARY");
-            payLoadSample.setpMS_ID("121212");
-            
-            String jsonRequest = new Gson().toJson(payLoadSample);
+
+    public static void main(String[] args) {
+        try {
+
+            CheckinPayload checkinPayload = new CheckinPayload();
+            checkinPayload.setCheckinTime("Now");
+            checkinPayload.setCheckoutTime("201805290940");
+            checkinPayload.setGuestFirstName("Zachary");
+            checkinPayload.setGuestLastName("Matu");
+            checkinPayload.setRoomName("101");
+            checkinPayload.setRoomType("SingleStandard");
+            checkinPayload.setUserGroup("RegularGuest");
+            checkinPayload.setDestinationAddress("127.0.0.1");
+            checkinPayload.setSourceAddress("127.0.0.1");
+            //checkinPayload.set
+
+            String jsonRequest = new Gson().toJson(checkinPayload);
             System.out.println("Request >> " + jsonRequest);
-            String response = new HTTPCaller().makeHTTPCall(jsonRequest, "");
-            
-            
-            
-            
-        }
-        catch(Exception ex)
-        {
-            ex.printStackTrace();
+            String response = new HTTPCaller().makeHTTPCall(jsonRequest, "http://localhost:8095/lock/request/checkInAGuest");
+            System.out.println("Response >> " + response);
+
+        } catch (Exception ex) {
+            if (ex instanceof java.net.SocketTimeoutException) {
+
+            } else {
+                ex.printStackTrace();
+            }
         }
     }
-    
+
 }

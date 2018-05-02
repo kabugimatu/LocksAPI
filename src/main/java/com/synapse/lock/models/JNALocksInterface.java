@@ -19,13 +19,14 @@ public class JNALocksInterface {
         
         VinguardLibrary INSTANCE = (VinguardLibrary) Native.loadLibrary("C:\\Program Files (x86)\\VingCard\\Vision\\pmsif.dll", VinguardLibrary.class);
 
-        VinguardLibrary SYNC_INSTANCE = (VinguardLibrary) Native.synchronizedLibrary(INSTANCE);
+        
 
         public int PMSifRegister(String license, String appName);
 
         public int PMSifUnregister();
         
-        public void PMSifEncodeKcdLcl(byte[] b,String dta,boolean debug,String szOpid,String szOpFirst,String szOpLast);
+        public void PMSifEncodeKcdLcl(byte[] ff,String dta,boolean debug,String szOpid,String szOpFirst,String szOpLast);
+        boolean PMSifShutdownVision ();
 
 
     }

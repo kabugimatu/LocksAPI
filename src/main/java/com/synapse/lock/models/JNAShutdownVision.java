@@ -7,22 +7,14 @@ package com.synapse.lock.models;
 
 /**
  *
- * @author Kabugi
+ * @author zkmatu
  */
-public class TestString {
+public class JNAShutdownVision {
     
     public static void main(String[] args)
     {
-        String testStr = "zachary";
-        
-        byte[] strBytes = testStr.getBytes();
-        
-        for (int i = 0; i < strBytes.length; i++) {
-             System.out.println((char)strBytes[i]);
-        }
-     
-        
-        
+         JNALocksInterface.VinguardLibrary INSTANCE = JNALocksInterface.VinguardLibrary.INSTANCE;
+         INSTANCE.PMSifShutdownVision();
     }
     
 }

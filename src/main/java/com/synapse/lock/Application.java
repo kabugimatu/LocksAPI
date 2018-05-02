@@ -11,8 +11,9 @@ public class Application {
 		SpringApplication.run(Application.class, args);
                 //JNALocksInterface locksInterface = new JNALocksInterface();
                 System.out.println("Registering Locks Interface...");
+                 JNALocksInterface.VinguardLibrary INSTANCE = JNALocksInterface.VinguardLibrary.INSTANCE;
                 
-                int response= JNALocksInterface.PMSifRegister("42860149","BatchClient");
+                int response= INSTANCE.PMSifRegister("42860149","BatchClient");
                 if( response==0)
                 {
                     System.out.println("Hurray Zack..Registered successfully....");

@@ -24,7 +24,7 @@ public class JNAEncodeKeyCard {
         payLoadSample.setRoom_Name("101");
         payLoadSample.setRoom_List("101");
         payLoadSample.setUser_Type("Single Room");
-        payLoadSample.setUser_Group("RegularGuest");
+        payLoadSample.setUser_Group("Regular Guest");
         payLoadSample.setCheck_In_time("201805020111");
         payLoadSample.setCheck_Out_Time("201805030111");
         payLoadSample.setFamily_Name("Matu");
@@ -46,23 +46,23 @@ public class JNAEncodeKeyCard {
         int len = data.length();
         
         System.out.println("Data length >> " + len);
-        byte dta[] = new byte[len + 1];
-        ByteBuffer bbuf = ByteBuffer.wrap(dta);
-        enc.encode(CharBuffer.wrap(data), bbuf, true);
-
-        //  dta[len] = 0;
-        
-          ; 
+        byte dta[] = new byte[len];
+//        ByteBuffer bbuf = ByteBuffer.wrap(dta);
+//        enc.encode(CharBuffer.wrap(data), bbuf, true);
+//
+//        //  dta[len] = 0;
+//        
+//          ; 
           System.out.println("Total bytes >> " + dta.length);
            
           
-          INSTANCE.PMSifEncodeKcdLcl(commandCode, data.getBytes(), false, "zkmatu", "Zack", "Matu");
+          INSTANCE.PMSifEncodeKcdLcl(commandCodeBytes, data, false, "zkmatu", "Zack", "Matu");
           
-        //  String ffResponse = Native.toString(commandCodeBytes);
+          String ffResponse = Native.toString(commandCodeBytes);
           String dtaResponse = Native.toString(dta);
           
           
-       //   System.out.println("FF Response >>  " + ffResponse);
+          System.out.println("FF Response >>  " + ffResponse);
           System.out.println("DTA Response >>  " + dtaResponse);
     }
     

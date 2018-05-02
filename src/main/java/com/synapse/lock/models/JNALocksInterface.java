@@ -25,7 +25,7 @@ public class JNALocksInterface {
 
         public int PMSifUnregister();
         
-        public void PMSifEncodeKcdLcl(String b,byte[] dta,boolean debug,String szOpid,String szOpFirst,String szOpLast);
+        public void PMSifEncodeKcdLcl(byte[] b,String dta,boolean debug,String szOpid,String szOpFirst,String szOpLast);
 
 
     }

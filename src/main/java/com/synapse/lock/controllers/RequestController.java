@@ -108,7 +108,7 @@ public class RequestController {
        
     
        // JNALocksInterface locksInterface = new JNALocksInterface();
-       String response = JNALocksInterface.PMSifEncodeKcdLcl("I", lockEncodeData, true, request.getUserCheckin(), request.getUserFirstName(), request.getUserLastName());
+       String response = "";
       
        if(response !=null){
              System.out.println("Response from api >> " +response);

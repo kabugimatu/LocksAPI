@@ -16,24 +16,23 @@ import java.io.UnsupportedEncodingException;
 public class JNAEncodeKeyCard {
 
     public static void main(String[] args) throws UnsupportedEncodingException {
-       
+
         JNALocksInterface.LockLibrary INSTANCE = JNALocksInterface.LockLibrary.INSTANCE;
         GenericPayload payLoadSample = new GenericPayload();
         payLoadSample.setRoom_Name("101");
-        payLoadSample.setRoom_List("101");
+        //  payLoadSample.setRoom_List("101");
         payLoadSample.setUser_Type("Single Room");
+        payLoadSample.setFamily_Name("Matu");
+        payLoadSample.setFirst_Name("Zachary");
         payLoadSample.setUser_Group("Regular Guest");
         payLoadSample.setCheck_In_time("201805021347");
         payLoadSample.setCheck_Out_Time("201805030111");
-        payLoadSample.setFamily_Name("Matu");
-        payLoadSample.setFirst_Name("Zachary");
-        // payLoadSample.setpMS_ID("121212");
 
+        // payLoadSample.setpMS_ID("121212");
         String data = getPayloadToSend(payLoadSample);
 
         System.out.println("Data >> " + data);
         String commandCode = "I";
-
 
         byte[] dataBytes = new byte[data.length() + 1];
         System.arraycopy(data.getBytes("UTF-8"), 0, dataBytes, 0, data.length());
@@ -43,24 +42,21 @@ public class JNAEncodeKeyCard {
 
         byte[] commanCodeBytesConv = commandCode.getBytes("UTF-8");
 
-       
-
         for (int i = 0; i < dataBytes.length; i++) {
 
             String s1 = String.format("%8s", Integer.toBinaryString(dataBytes[i] & 0xFF)).replace(' ', '0');
-         //   System.out.println(s1);
-         
-           if((char)dataBytes[i] == '*')
-           {
-               bitByteArray[i] = 30;
-           }
-           else{
+            //   System.out.println(s1);
+
+//            if ((char) dataBytes[i] == '*') {
+//                bitByteArray[i] = 30;
+//            } 
+            
+        
                 int val = Integer.parseInt(s1, 2);
-               byte b = (byte) val;
-               bitByteArray[i] = b;
-           }
-           
-           
+                byte b = (byte) val;
+                bitByteArray[i] = b;
+           // }
+
         }
         byte[] commandCodeFinal = new byte[1];
         for (int i = 0; i < commanCodeBytesConv.length; i++) {
@@ -71,8 +67,6 @@ public class JNAEncodeKeyCard {
             byte b = (byte) val;
             commandCodeFinal[i] = b;
         }
-
-       
 
         String userNameBytes = "zkmatu";
         String userFirstNameBytes = "Zack";
@@ -95,20 +89,30 @@ public class JNAEncodeKeyCard {
         if (thisPayload.room_Name != null && !thisPayload.room_Name.equals("string") && thisPayload.room_Name.length() > 0) {
             payload += "R" + thisPayload.room_Name + fieldSeparator;
         }
-        if (thisPayload.room_List != null && !thisPayload.room_List.equals("string") && thisPayload.room_List.length() > 0) {
-            payload += "L" + thisPayload.room_List + fieldSeparator;
-        }
+
         if (thisPayload.user_Type != null && !thisPayload.user_Type.equals("string") && thisPayload.user_Type.length() > 0) {
             payload += "T" + thisPayload.user_Type + fieldSeparator;
         }
-        if (thisPayload.family_Name != null && !thisPayload.family_Name.equals("string") && thisPayload.family_Name.length() > 0) {
-            payload += "N" + thisPayload.family_Name + fieldSeparator;
-        }
+
         if (thisPayload.first_Name != null && !thisPayload.first_Name.equals("string") && thisPayload.first_Name.length() > 0) {
             payload += "F" + thisPayload.first_Name + fieldSeparator;
         }
+
+        if (thisPayload.family_Name != null && !thisPayload.family_Name.equals("string") && thisPayload.family_Name.length() > 0) {
+            payload += "N" + thisPayload.family_Name + fieldSeparator;
+        }
         if (thisPayload.user_Group != null && !thisPayload.user_Group.equals("string") && thisPayload.user_Group.length() > 0) {
             payload += "U" + thisPayload.user_Group + fieldSeparator;
+        }
+
+        if (thisPayload.check_In_time != null && !thisPayload.check_In_time.equals("string") && thisPayload.check_In_time.length() > 0) {
+            payload += "D" + thisPayload.check_In_time + fieldSeparator;
+        }
+        if (thisPayload.check_Out_Time != null && !thisPayload.check_Out_Time.equals("string") && thisPayload.check_Out_Time.length() > 0) {
+            payload += "O" + thisPayload.check_Out_Time + fieldSeparator;
+        }
+        if (thisPayload.room_List != null && !thisPayload.room_List.equals("string") && thisPayload.room_List.length() > 0) {
+            payload += "L" + thisPayload.room_List + fieldSeparator;
         }
 
         if (thisPayload.access_Points != null && !thisPayload.access_Points.equals("string") && thisPayload.access_Points.length() > 0) {
@@ -146,12 +150,6 @@ public class JNAEncodeKeyCard {
         }
         if (thisPayload.vingCard_Code != null && !thisPayload.vingCard_Code.equals("string") && thisPayload.vingCard_Code.length() > 0) {
             payload += "V" + thisPayload.vingCard_Code + fieldSeparator;
-        }
-        if (thisPayload.check_In_time != null && !thisPayload.check_In_time.equals("string") && thisPayload.check_In_time.length() > 0) {
-            payload += "D" + thisPayload.check_In_time + fieldSeparator;
-        }
-        if (thisPayload.check_Out_Time != null && !thisPayload.check_Out_Time.equals("string") && thisPayload.check_Out_Time.length() > 0) {
-            payload += "O" + thisPayload.check_Out_Time + fieldSeparator;
         }
 
         return payload.substring(0, payload.length() - 1);

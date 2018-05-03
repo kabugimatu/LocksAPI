@@ -13,7 +13,7 @@ public class JNAShutdownVision {
     
     public static void main(String[] args)
     {
-         JNALocksInterface.VinguardLibrary INSTANCE = JNALocksInterface.VinguardLibrary.INSTANCE;
+         JNALocksInterface.LockLibrary INSTANCE = JNALocksInterface.LockLibrary.INSTANCE;
          INSTANCE.PMSifShutdownVision();
     }
     

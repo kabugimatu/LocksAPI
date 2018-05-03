@@ -14,20 +14,17 @@ import com.sun.jna.win32.StdCallLibrary;
  */
 public class JNALocksInterface {
 
-    public interface VinguardLibrary extends StdCallLibrary {
+    public interface LockLibrary extends StdCallLibrary {
 
-        
-        VinguardLibrary INSTANCE = (VinguardLibrary) Native.loadLibrary("C:\\Program Files (x86)\\VingCard\\Vision\\pmsif.dll", VinguardLibrary.class);
-
-        
+        LockLibrary INSTANCE = (LockLibrary) Native.loadLibrary("C:\\Program Files (x86)\\VingCard\\Vision\\pmsif.dll", LockLibrary.class);
 
         public int PMSifRegister(String license, String appName);
 
         public int PMSifUnregister();
-        
-        public void PMSifEncodeKcdLcl(byte[] ff,String dta,boolean debug,String szOpid,String szOpFirst,String szOpLast);
-        boolean PMSifShutdownVision ();
 
+        public void PMSifEncodeKcdLcl(byte[] ff, byte[] dta, boolean debug, String szOpid, String szOpFirst, String szOpLast);
+
+        boolean PMSifShutdownVision();
 
     }
 

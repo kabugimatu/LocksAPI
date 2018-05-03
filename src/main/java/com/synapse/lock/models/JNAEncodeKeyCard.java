@@ -5,16 +5,9 @@
  */
 package com.synapse.lock.models;
 
-import com.sun.jna.Memory;
 import com.sun.jna.Native;
-import com.sun.jna.Pointer;
 import com.synapse.lock.payload.GenericPayload;
 import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
 
 /**
  *
@@ -23,7 +16,8 @@ import java.nio.charset.CharsetEncoder;
 public class JNAEncodeKeyCard {
 
     public static void main(String[] args) throws UnsupportedEncodingException {
-           JNALocksInterface.VinguardLibrary INSTANCE = JNALocksInterface.VinguardLibrary.INSTANCE;
+       
+        JNALocksInterface.LockLibrary INSTANCE = JNALocksInterface.LockLibrary.INSTANCE;
         GenericPayload payLoadSample = new GenericPayload();
         payLoadSample.setRoom_Name("101");
         payLoadSample.setRoom_List("101");
@@ -36,43 +30,67 @@ public class JNAEncodeKeyCard {
         // payLoadSample.setpMS_ID("121212");
 
         String data = getPayloadToSend(payLoadSample);
-        String commandCode = "A";
-        
+
         System.out.println("Data >> " + data);
-        
-        ByteBuffer dataByteBuffer = ByteBuffer.allocate(data.length());
-        dataByteBuffer.put(data.getBytes("UTF-8"));
-        
-        dataByteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-        
-        byte[] dataConvBytes = dataByteBuffer.array();
+        String commandCode = "I";
 
-        ByteBuffer commandCodeByteBuffer = ByteBuffer.allocate(commandCode.length());
-        commandCodeByteBuffer.put(commandCode.getBytes("UTF-8"));
 
-        commandCodeByteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+        byte[] dataBytes = new byte[data.length() + 1];
+        System.arraycopy(data.getBytes("UTF-8"), 0, dataBytes, 0, data.length());
+        dataBytes[data.length()] = 0;
 
-        byte[] commanCodeBytesConv = commandCodeByteBuffer.array();
-        
+        byte[] bitByteArray = new byte[data.length() + 1];
+
+        byte[] commanCodeBytesConv = commandCode.getBytes("UTF-8");
+
        
-    
-        
 
-        INSTANCE.PMSifEncodeKcdLcl(commanCodeBytesConv, data, false, "zkmatu", "Zack", "Matu");
+        for (int i = 0; i < dataBytes.length; i++) {
 
-        String ffResponse = Native.toString(commanCodeBytesConv);
-        String dtaResponse = Native.toString(dataConvBytes);
+            String s1 = String.format("%8s", Integer.toBinaryString(dataBytes[i] & 0xFF)).replace(' ', '0');
+         //   System.out.println(s1);
+         
+           if((char)dataBytes[i] == '*')
+           {
+               bitByteArray[i] = 30;
+           }
+           else{
+                int val = Integer.parseInt(s1, 2);
+               byte b = (byte) val;
+               bitByteArray[i] = b;
+           }
+           
+           
+        }
+        byte[] commandCodeFinal = new byte[1];
+        for (int i = 0; i < commanCodeBytesConv.length; i++) {
+            String s2 = String.format("%8s", Integer.toBinaryString(commanCodeBytesConv[i] & 0xFF)).replace(' ', '0');
+            System.out.println(s2);
+
+            int val = Integer.parseInt(s2, 2);
+            byte b = (byte) val;
+            commandCodeFinal[i] = b;
+        }
+
+       
+
+        String userNameBytes = "zkmatu";
+        String userFirstNameBytes = "Zack";
+        String userLastNameBytes = "Matu";
+
+        INSTANCE.PMSifEncodeKcdLcl(commandCodeFinal, bitByteArray, false, userNameBytes, userFirstNameBytes, userLastNameBytes);
+
+        String ffResponse = Native.toString(commandCodeFinal, "UTF-8");
+        String dtaResponse = Native.toString(bitByteArray, "UTF-8");
 
         System.out.println("FF Response >>  " + ffResponse);
-        //System.out.println("DTA Response >>  " + dtaResponse);
+        System.out.println("DTA Response >>  " + dtaResponse);
     }
 
     public static String getPayloadToSend(GenericPayload thisPayload) {
-      String fieldSeparator = "*";//Character.toString ((char) 30);
-       
-     
+        String fieldSeparator = "*";//Character.toString ((char) 30);
 
-        String payload =  fieldSeparator;
+        String payload = fieldSeparator;
 
         if (thisPayload.room_Name != null && !thisPayload.room_Name.equals("string") && thisPayload.room_Name.length() > 0) {
             payload += "R" + thisPayload.room_Name + fieldSeparator;
@@ -86,14 +104,13 @@ public class JNAEncodeKeyCard {
         if (thisPayload.family_Name != null && !thisPayload.family_Name.equals("string") && thisPayload.family_Name.length() > 0) {
             payload += "N" + thisPayload.family_Name + fieldSeparator;
         }
-          if (thisPayload.first_Name != null && !thisPayload.first_Name.equals("string") && thisPayload.first_Name.length() > 0) {
+        if (thisPayload.first_Name != null && !thisPayload.first_Name.equals("string") && thisPayload.first_Name.length() > 0) {
             payload += "F" + thisPayload.first_Name + fieldSeparator;
         }
         if (thisPayload.user_Group != null && !thisPayload.user_Group.equals("string") && thisPayload.user_Group.length() > 0) {
             payload += "U" + thisPayload.user_Group + fieldSeparator;
         }
-      
-        
+
         if (thisPayload.access_Points != null && !thisPayload.access_Points.equals("string") && thisPayload.access_Points.length() > 0) {
             payload += "A" + thisPayload.access_Points + fieldSeparator;
         }
@@ -137,7 +154,7 @@ public class JNAEncodeKeyCard {
             payload += "O" + thisPayload.check_Out_Time + fieldSeparator;
         }
 
-        return payload.substring(0, payload.length() - 1) ;
+        return payload.substring(0, payload.length() - 1);
     }
 
 }

@@ -14,7 +14,7 @@ public class JNARegisterPMS {
     public static void main(String[] args)
     {
        
-        JNALocksInterface.VinguardLibrary INSTANCE = JNALocksInterface.VinguardLibrary.INSTANCE;
+        JNALocksInterface.LockLibrary INSTANCE = JNALocksInterface.LockLibrary.INSTANCE;
       
         System.out.println("Registerring >> " + INSTANCE.PMSifRegister("42860149", "BatchClient")) ;
     }

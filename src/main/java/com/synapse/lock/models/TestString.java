@@ -5,24 +5,31 @@
  */
 package com.synapse.lock.models;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.util.BitSet;
+import okio.ByteString;
+
 /**
  *
  * @author Kabugi
  */
 public class TestString {
-    
-    public static void main(String[] args)
-    {
-        String testStr = "zachary";
-        
-        byte[] strBytes = testStr.getBytes();
-        
-        for (int i = 0; i < strBytes.length; i++) {
-             System.out.println((char)strBytes[i]);
+
+    public static void main(String[] args) throws UnsupportedEncodingException {
+       String str = "0101A";
+       
+       byte[] bytes = str.getBytes("UTF-8");
+       
+        for (int i = 0; i < bytes.length; i++) {
+
+            String s1 = String.format("%8s", Integer.toBinaryString(bytes[i] & 0xFF)).replace(' ', '0');
+            System.out.println(s1);
+           
         }
-     
+       
         
-        
+
     }
-    
+
 }

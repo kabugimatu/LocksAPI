@@ -5,7 +5,10 @@
  */
 package com.synapse.lock.models;
 
+import com.sun.jna.Memory;
 import com.sun.jna.Native;
+import com.sun.jna.Pointer;
+import com.sun.jna.ptr.IntByReference;
 import com.synapse.lock.payload.GenericPayload;
 import java.io.UnsupportedEncodingException;
 
@@ -16,79 +19,48 @@ import java.io.UnsupportedEncodingException;
 public class JNAEncodeKeyCard {
 
     public static void main(String[] args) throws UnsupportedEncodingException {
-       
+
         JNALocksInterface.LockLibrary INSTANCE = JNALocksInterface.LockLibrary.INSTANCE;
         GenericPayload payLoadSample = new GenericPayload();
         payLoadSample.setRoom_Name("101");
-        payLoadSample.setRoom_List("101");
+        //  payLoadSample.setRoom_List("101");
         payLoadSample.setUser_Type("Single Room");
         payLoadSample.setUser_Group("Regular Guest");
-        payLoadSample.setCheck_In_time("201805021347");
-        payLoadSample.setCheck_Out_Time("201805030111");
+        payLoadSample.setCheck_In_time("201805040822");
+        payLoadSample.setCheck_Out_Time("201805080111");
         payLoadSample.setFamily_Name("Matu");
         payLoadSample.setFirst_Name("Zachary");
         // payLoadSample.setpMS_ID("121212");
+        String fieldSeparator = "\u001e";
+        String dataTest = fieldSeparator + "R101" + fieldSeparator + "TSingle Room" + fieldSeparator + "FShujaa" + fieldSeparator + "NMatoke"
+                + fieldSeparator + "URegular Guest" + fieldSeparator + "D201805040842" + fieldSeparator + "O201805051245";
 
-        String data = getPayloadToSend(payLoadSample);
+        String dataTestPadded = org.apache.commons.lang.StringUtils.rightPad(dataTest, 30, '0');
 
-        System.out.println("Data >> " + data);
-        String commandCode = "I";
+        System.out.println("Padded string >> " + dataTestPadded);
 
+        String data = dataTest;
+        //getPayloadToSend(payLoadSample) + (char)00;
 
-        byte[] dataBytes = new byte[data.length() + 1];
-        System.arraycopy(data.getBytes("UTF-8"), 0, dataBytes, 0, data.length());
-        dataBytes[data.length()] = 0;
+        String commandCode = "A";
 
-        byte[] bitByteArray = new byte[data.length() + 1];
+        Memory commandCodeMemory = new Memory(commandCode.length() + 1);
+        commandCodeMemory.setString(0, commandCode);
 
-        byte[] commanCodeBytesConv = commandCode.getBytes("UTF-8");
+        Memory dataMemory = new Memory(data.length() + 1);
+        dataMemory.setString(0, data);
+        //dataMemory.setString(1, "0");
 
-       
+        INSTANCE.PMSifEncodeKcdLcl(commandCodeMemory, dataMemory, false, "ZKMATU", "zACHARY", "tESTING");
 
-        for (int i = 0; i < dataBytes.length; i++) {
+        System.out.println("FF Response >>  " + commandCodeMemory.getString(0));
+        System.out.println("DTA Response >>  " + dataMemory.getString(0));
 
-            String s1 = String.format("%8s", Integer.toBinaryString(dataBytes[i] & 0xFF)).replace(' ', '0');
-         //   System.out.println(s1);
-         
-           if((char)dataBytes[i] == '*')
-           {
-               bitByteArray[i] = 30;
-           }
-           else{
-                int val = Integer.parseInt(s1, 2);
-               byte b = (byte) val;
-               bitByteArray[i] = b;
-           }
-           
-           
-        }
-        byte[] commandCodeFinal = new byte[1];
-        for (int i = 0; i < commanCodeBytesConv.length; i++) {
-            String s2 = String.format("%8s", Integer.toBinaryString(commanCodeBytesConv[i] & 0xFF)).replace(' ', '0');
-            System.out.println(s2);
-
-            int val = Integer.parseInt(s2, 2);
-            byte b = (byte) val;
-            commandCodeFinal[i] = b;
-        }
-
-       
-
-        String userNameBytes = "zkmatu";
-        String userFirstNameBytes = "Zack";
-        String userLastNameBytes = "Matu";
-
-        INSTANCE.PMSifEncodeKcdLcl(commandCodeFinal, bitByteArray, false, userNameBytes, userFirstNameBytes, userLastNameBytes);
-
-        String ffResponse = Native.toString(commandCodeFinal, "UTF-8");
-        String dtaResponse = Native.toString(bitByteArray, "UTF-8");
-
-        System.out.println("FF Response >>  " + ffResponse);
-        System.out.println("DTA Response >>  " + dtaResponse);
+        INSTANCE.PMSifUnregister();
     }
 
     public static String getPayloadToSend(GenericPayload thisPayload) {
-        String fieldSeparator = "*";//Character.toString ((char) 30);
+        String fieldSeparator = "\u001e";
 
         String payload = fieldSeparator;
 

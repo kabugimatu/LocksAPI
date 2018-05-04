@@ -6,7 +6,6 @@
 package com.synapse.lock.models;
 
 import com.sun.jna.*;
-import com.sun.jna.win32.StdCallLibrary;
 
 /**
  *
@@ -14,7 +13,7 @@ import com.sun.jna.win32.StdCallLibrary;
  */
 public class JNALocksInterface {
 
-    public interface LockLibrary extends StdCallLibrary {
+    public interface LockLibrary extends Library {
 
         LockLibrary INSTANCE = (LockLibrary) Native.loadLibrary("C:\\Program Files (x86)\\VingCard\\Vision\\pmsif.dll", LockLibrary.class);
 
@@ -22,9 +21,7 @@ public class JNALocksInterface {
 
         public int PMSifUnregister();
 
-        public void PMSifEncodeKcdLcl(byte[] ff, byte[] dta, boolean debug, String szOpid, String szOpFirst, String szOpLast);
-
-        boolean PMSifShutdownVision();
+       public void PMSifEncodeKcdLcl(Pointer ff, Pointer dta, boolean debug, String szOpid, String szOpFirst, String szOpLast);
 
     }
 

@@ -14,7 +14,7 @@ public class JNAShutdownVision {
     public static void main(String[] args)
     {
          JNALocksInterface.LockLibrary INSTANCE = JNALocksInterface.LockLibrary.INSTANCE;
-         INSTANCE.PMSifShutdownVision();
+//         INSTANCE.PMSifShutdownVision();
     }
     
 }

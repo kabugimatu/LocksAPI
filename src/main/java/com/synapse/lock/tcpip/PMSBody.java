@@ -5,18 +5,26 @@
  */
 package com.synapse.lock.tcpip;
 
+import com.sun.jna.NativeLong;
+import com.sun.jna.Structure;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  *
  * @author Kabugi
  */
-public class PMSBody implements Serializable{
+public class PMSBody extends Structure{
     public PMSHeader hdr;
     
-    public String appName;
-    public  String appLicense;
-    public int ret;
+    public byte[] appName;
+    public byte[]  appLicense;
+    public NativeLong ret;
+
+    @Override
+    protected List<String> getFieldOrder() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     
 }

@@ -15,13 +15,18 @@ import java.util.List;
  *
  * @author Kabugi
  */
-public class PMSHeader implements Serializable {
+public class PMSHeader extends Structure {
     
-    public int synch1;
-    public int synch2;
-    public short version = 1;
-    public int commandid ;
-     public int bodySize ;
+    public NativeLong synch1;
+    public NativeLong synch2;
+    public int version = 1;
+    public NativeLong commandid ;
+     public NativeLong bodySize ;
+
+    @Override
+    protected List<String> getFieldOrder() {
+     return  Arrays.asList(new String[] { "synch1", "synch2", "version", "commandid","bodySize" });
+    }
     
 
    

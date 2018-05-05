@@ -23,6 +23,18 @@ public class CheckinPayload {
     String userGroup;
     String sourceAddress;
     String destinationAddress;
+    String pmsId;
+
+    public String getPmsId() {
+        return pmsId;
+    }
+
+    public void setPmsId(String pmsId) {
+        this.pmsId = pmsId;
+    }
+    
+    
+    
 
     public String getSourceAddress() {
         return sourceAddress;

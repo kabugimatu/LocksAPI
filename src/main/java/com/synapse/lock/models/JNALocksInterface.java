@@ -12,19 +12,21 @@ import com.sun.jna.*;
  * @author Kabugi
  */
 public class JNALocksInterface {
-
+    
+    public static String visionPath;
+ 
     public interface LockLibrary extends Library {
 
-        LockLibrary INSTANCE = (LockLibrary) Native.loadLibrary("C:\\Program Files (x86)\\VingCard\\Vision\\pmsif.dll", LockLibrary.class);
+        LockLibrary INSTANCE = (LockLibrary) Native.loadLibrary(visionPath, LockLibrary.class);
 
         public int PMSifRegister(String license, String appName);
 
         public int PMSifUnregister();
 
-       public void PMSifEncodeKcdLcl(Pointer ff, Pointer dta, boolean debug, String szOpid, String szOpFirst, String szOpLast);
+        public void PMSifEncodeKcdLcl(Pointer ff, Pointer dta, boolean debug, String szOpid, String szOpFirst, String szOpLast);
 
     }
-
-   
-
+    
+  
+    
 }

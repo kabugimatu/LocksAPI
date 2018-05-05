@@ -18,20 +18,22 @@ public class TestCheckin {
         try {
 
             CheckinPayload checkinPayload = new CheckinPayload();
-            checkinPayload.setCheckinTime("Now");
+            checkinPayload.setCheckinTime("201805040940");
             checkinPayload.setCheckoutTime("201805290940");
             checkinPayload.setGuestFirstName("Zachary");
             checkinPayload.setGuestLastName("Matu");
             checkinPayload.setRoomName("101");
-            checkinPayload.setRoomType("SingleStandard");
-            checkinPayload.setUserGroup("RegularGuest");
-            checkinPayload.setDestinationAddress("127.0.0.1");
-            checkinPayload.setSourceAddress("127.0.0.1");
+            checkinPayload.setRoomType("Single Room");
+            checkinPayload.setUserGroup("Regular Guest");
+            checkinPayload.setUserCheckin("zkmatu");
+            checkinPayload.setUserFirstName("Zachary");
+            checkinPayload.setUserLastName("Matu");
+           
             //checkinPayload.set
 
             String jsonRequest = new Gson().toJson(checkinPayload);
             System.out.println("Request >> " + jsonRequest);
-            String response = new HTTPCaller().makeHTTPCall(jsonRequest, "http://localhost:8095/lock/request/checkInAGuest");
+            String response = new HTTPCaller().makeHTTPCall(jsonRequest, "http://192.168.0.23:8095/lock/request/checkInAGuest");
             System.out.println("Response >> " + response);
 
         } catch (Exception ex) {

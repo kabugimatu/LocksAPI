@@ -19,14 +19,12 @@ public class TestCheckout {
         
         try{
         CheckoutPayload checkoutPayLoad = new CheckoutPayload();
-        checkoutPayLoad.setRoomName("101");
-        checkoutPayLoad.setRoomType("Standard");
-        checkoutPayLoad.setUserCheckin("zkmatu");
-        checkoutPayLoad.setUserFirstName("Zack");
-        checkoutPayLoad.setUserLastName("Matu");
+        checkoutPayLoad.setRoomName("102");
+        checkoutPayLoad.setRoomType("Single Room");
+       
           String jsonRequest = new Gson().toJson(checkoutPayLoad);
             System.out.println("Request >> " + jsonRequest);
-            String response = new HTTPCaller().makeHTTPCall(jsonRequest, "http://localhost:8095/lock/request/checkOutAGuest");
+            String response = new HTTPCaller().makeHTTPCall(jsonRequest, "http://192.168.0.23:8095/lock/request/checkOutAGuest");
             System.out.println("Response >> " + response);
         }
         catch(Exception ex)

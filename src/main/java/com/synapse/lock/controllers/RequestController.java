@@ -2,14 +2,15 @@ package com.synapse.lock.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import com.sun.jna.Native;
-import com.synapse.lock.models.JNALocksInterface;
+import com.synapse.lock.models.JNAEncodeKeyCard;
 
 import com.synapse.lock.models.Response;
 import com.synapse.lock.models.KeyCardRequest;
+import com.synapse.lock.payload.ChangeKeyPayLoad;
 import com.synapse.lock.payload.CheckinPayload;
 import com.synapse.lock.payload.CheckoutPayload;
 import com.synapse.lock.payload.GenericPayload;
+import com.synapse.lock.payload.ReplaceCardPayload;
 import com.synapse.lock.service.LockServiceImpl;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -95,35 +96,28 @@ public class RequestController {
             response = Response.class,
             responseContainer = "Object")
     @RequestMapping(value = "/checkInAGuest", method = RequestMethod.POST)
-    public ResponseEntity<?> checkInAGuest(@RequestBody CheckinPayload request) {
+    public ResponseEntity<?>  checkInAGuest(@RequestBody CheckinPayload request) {
         ResponseEntity<?> res = null;
-         Response responseEnt = null;
-         System.out.println("Received >> " + new Gson().toJson(request));
+        Response responseEnt = null;
+        System.out.println("Received >> " + new Gson().toJson(request));
+
+        GenericPayload payLoad = lockService.generateCheckInPayload(request);
+        String response = JNAEncodeKeyCard.encodeCard(env.getProperty("datasource.locksoftpath"), env.getProperty("datasource.lockLicenseCode"), env.getProperty("datasource.appName"), "A", payLoad);
+           System.out.println("Response from api >> " + response);
+        if (response != null && response.equalsIgnoreCase("0")) {
           
-        String lockEncodeData = lockService.generateCheckInPayload(request);
-        
-        System.out.println("Encode Data >> " + lockEncodeData);
-         String[] arguments = new String[] {lockEncodeData}; 
-       //JNALocksInterface.main(arguments);
-       
-    
-       // JNALocksInterface locksInterface = new JNALocksInterface();
-       String response = "";
-      
-       if(response !=null){
-             System.out.println("Response from api >> " +response);
-             responseEnt = new Response();
+            responseEnt = new Response();
             responseEnt.setResponseCode("01");
             responseEnt.setResponseDescription("Success");
             res = new ResponseEntity<>(response, HttpStatus.ACCEPTED);
-        }
-        else{
+        } else {
+            System.out.println("Failed to issue card >>");
             responseEnt = new Response();
             responseEnt.setResponseCode("05");
             responseEnt.setResponseDescription("Failed");
             res = new ResponseEntity<>(response, HttpStatus.OK);
         }
-      
+
         return res;
     }
 
@@ -139,27 +133,22 @@ public class RequestController {
         
          System.out.println("Received >> " + new Gson().toJson(request));
           
-        String lockEncodeData = lockService.generateCheckOutPayload(request);
-        
-        System.out.println("Encode Data >> " + lockEncodeData);
-        
-        
-         String response = "";
-      
-        if(response !=null){
-             System.out.println("Response from api >> " +response);
-             responseEnt = new Response();
+        GenericPayload payLoad = lockService.generateCheckOutPayload(request);
+       
+        String response = JNAEncodeKeyCard.encodeCard(env.getProperty("datasource.locksoftpath"), env.getProperty("datasource.lockLicenseCode"), env.getProperty("datasource.appName"), "B", payLoad);
+
+            if (response != null && response.equalsIgnoreCase("0")) {
+            System.out.println("Response from api >> " + response);
+            responseEnt = new Response();
             responseEnt.setResponseCode("01");
             responseEnt.setResponseDescription("Success");
             res = new ResponseEntity<>(response, HttpStatus.ACCEPTED);
-        }
-        else{
+        } else {
             responseEnt = new Response();
             responseEnt.setResponseCode("05");
             responseEnt.setResponseDescription("Failed");
             res = new ResponseEntity<>(response, HttpStatus.OK);
         }
-       
         
         return res;
     }
@@ -171,9 +160,28 @@ public class RequestController {
             response = Response.class,
             responseContainer = "Object")
     @RequestMapping(value = "/changeGuestStatus", method = RequestMethod.POST)
-    public ResponseEntity<?> changeGuestStatus(@RequestBody GenericPayload request) {
+    public ResponseEntity<?> changeGuestStatus(@RequestBody ChangeKeyPayLoad request) {
         ResponseEntity<?> res = null;
-        Response response = null;
+        Response responseEnt = null;
+        
+         System.out.println("Received >> " + new Gson().toJson(request));
+          
+        GenericPayload payLoad = lockService.generateChangeKeyPayLoad(request);
+       
+        String response = JNAEncodeKeyCard.encodeCard(env.getProperty("datasource.locksoftpath"), env.getProperty("datasource.lockLicenseCode"), env.getProperty("datasource.appName"), "C", payLoad);
+
+            if (response != null && response.equalsIgnoreCase("0")) {
+            System.out.println("Response from api >> " + response);
+            responseEnt = new Response();
+            responseEnt.setResponseCode("01");
+            responseEnt.setResponseDescription("Success");
+            res = new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+        } else {
+            responseEnt = new Response();
+            responseEnt.setResponseCode("05");
+            responseEnt.setResponseDescription("Failed");
+            res = new ResponseEntity<>(response, HttpStatus.OK);
+        }
         
         return res;
     }
@@ -185,9 +193,29 @@ public class RequestController {
             response = Response.class,
             responseContainer = "Object")
     @RequestMapping(value = "/replaceGuestCard", method = RequestMethod.POST)
-    public ResponseEntity<?> replaceGuestCard(@RequestBody GenericPayload request) {
+    public ResponseEntity<?> replaceGuestCard(@RequestBody ReplaceCardPayload request) {
         ResponseEntity<?> res = null;
-        Response response = null;
+        Response responseEnt = null;
+        
+        GenericPayload payLoad = lockService.generateReplaceCardPayLoad(request);
+        
+        String response = JNAEncodeKeyCard.encodeCard(env.getProperty("datasource.locksoftpath"), env.getProperty("datasource.lockLicenseCode"), env.getProperty("datasource.appName"), "F", payLoad);
+
+        if (response != null && response.equalsIgnoreCase("0")) {
+            System.out.println("Response from api >> " + response);
+            responseEnt = new Response();
+            responseEnt.setResponseCode("01");
+            responseEnt.setResponseDescription("Success");
+            res = new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+        } else {
+            responseEnt = new Response();
+            responseEnt.setResponseCode("05");
+            responseEnt.setResponseDescription("Failed");
+            res = new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        
+        
+        
        
         return res;
     }
